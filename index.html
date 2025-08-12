@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator & Birthday Countdown</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 500px;
+        background: #fff;
+        margin: 50px auto 20px;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+        color: #ff6f61;
+    }
+    input {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 80%;
+        font-size: 16px;
+    }
+    button {
+        padding: 10px 20px;
+        background: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    button:hover {
+        background: #e55b4f;
+    }
+    .result {
+        margin-top: 20px;
+        font-size: 18px;
+    }
+    .countdown {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #444;
+    }
+    footer {
+        margin-top: auto;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        color: #666;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎂 Age Calculator</h1>
+    <input type="date" id="birthDate">
+    <br>
+    <button onclick="calculateAge()">Calculate</button>
+
+    <div class="result" id="ageResult"></div>
+    <div class="countdown" id="birthdayCountdown"></div>
+</div>
+
+<footer>
+    Made by Durgesh
+</footer>
+
+<script>
+let countdownInterval;
+
+function calculateAge() {
+    const birthDateInput = document.getElementById("birthDate").value;
+    const ageResult = document.getElementById("ageResult");
+    const birthdayCountdown = document.getElementById("birthdayCountdown");
+
+    clearInterval(countdownInterval); // Clear old countdown
+
+    if (!birthDateInput) {
+        ageResult.textContent = "Please select your date of birth.";
+        birthdayCountdown.textContent = "";
+        return;
+    }
+
+    const birthDate = new Date(birthDateInput);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    ageResult.textContent = `You are ${age} years old.`;
+
+    // Countdown to next birthday
+    let nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+    if (today > nextBirthday) {
+        nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+
+    function updateCountdown() {
+        const now = new Date();
+        const timeDiff = nextBirthday - now;
+
+        if (timeDiff <= 0) {
+            birthdayCountdown.textContent = "🎉 Happy Birthday! 🎂";
+            clearInterval(countdownInterval);
+            return;
+        }
+
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeDiff / 1000) % 60);
+
+        birthdayCountdown.textContent = `Next Birthday In: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+}
+</script>
+
+</body>
+</html>
